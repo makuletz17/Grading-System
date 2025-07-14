@@ -21,7 +21,14 @@
             <input id="log-pass" type="password" placeholder="Password"
                 class="mb-4 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-300" />
             <button id="login-btn"
-                class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition">Login</button>
+                class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition flex items-center justify-center">
+                <span id="login-text">Login</span>
+                <svg id="login-spinner" class="hidden animate-spin h-5 w-5 text-white ml-2"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+            </button>
             <p class="mt-4 text-center text-sm">
                 Don't have an account?
                 <button id="register-btn" class="text-blue-600 underline hover:text-blue-800">Register</button>
@@ -31,17 +38,33 @@
         <!-- Register Form (Initially Hidden) -->
         <div id="register-form" class="hidden">
             <h2 class="text-lg font-medium mb-2">Register</h2>
+            <input id="reg-username" type="text" placeholder="Username"
+                class="mb-4 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300" />
             <input id="reg-email" type="email" placeholder="Email"
                 class="mb-3 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300" />
             <input id="reg-pass" type="password" placeholder="Password"
                 class="mb-4 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300" />
+            <input id="reg-name" type="text" placeholder="Fullname"
+                class="mb-4 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300" />
+
             <button id="signup-btn"
-                class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">Sign Up</button>
+                class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition flex items-center justify-center">
+                <span id="signup-text">Sign Up</span>
+                <svg id="signup-spinner" class="hidden animate-spin h-5 w-5 text-white ml-2"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+            </button>
+
             <p class="mt-4 text-center text-sm">
                 Already have an account?
                 <button class="text-blue-600 underline hover:text-blue-800" id="back-to-login">Login</button>
             </p>
         </div>
+    </div>
+    <div id="toast"
+        class="fixed bottom-4 right-4 hidden bg-gray-900 text-white px-4 py-2 rounded-md shadow-lg z-50 transition duration-300">
     </div>
     <script type="module" src="./auth.js" defer></script>
 

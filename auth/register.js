@@ -1,24 +1,60 @@
 import { supabase } from "../supabaseClient.js";
 
-export async function registerUser(email, password, name, level = 1) {
-  const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error) return error.message;
+export async function registerUser(data) {
+  const { username, email, password, name } = data;
 
-  const userId = data.user?.id;
+  // Step 1: Check if user already exists
+  const { data: existing } = await supabase
+    .from("users")
+    .select("userId, email, username")
+    .or(`email.eq.${email},username.eq.${username}`)
+    .maybeSingle();
+
+  if (existing) return "User already exists in database.";
+
+  // Step 2: Create user in Auth
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { name, username },
+    },
+  });
+  if (authError) return authError.message;
+
+  const userId = authData.user?.id;
   if (!userId) return "User ID not found";
 
-  // Insert into your table
-  const { error: insertError } = await supabase.from("users").insert([
-    {
-      userId: userId,
-      name: name,
-      level: level,
-      email: email,
-      is_hold: 0,
-      is_registered: 1,
-      date_created: new Date(),
-    },
-  ]);
+  // Step 3: Insert into your custom users table without userId
+  const { data: insertedRow, error: insertError } = await supabase
+    .from("users")
+    .insert([
+      {
+        name,
+        username,
+        email,
+        is_hold: 0,
+        is_registered: 0,
+        date_created: new Date(),
+      },
+    ])
+    .select()
+    .single();
 
-  return insertError ? insertError.message : "Registered successfully!";
+  if (insertError) {
+    // Optionally: delete the Auth user if you want rollback logic
+    await supabase.auth.admin.deleteUser(userId); // Requires service key
+    return `Registration failed: ${insertError.message}. Auth user deleted.`;
+  }
+
+  // Step 4: Update the row with userId
+  const { error: updateError } = await supabase
+    .from("users")
+    .update({ userId: userId })
+    .eq("id", insertedRow.id);
+
+  if (updateError)
+    return `User created but failed to update userId: ${updateError.message}`;
+
+  return "Registered successfully!";
 }
