@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Supabase Auth</title>
+</head>
+
+<body>
+    <h2>Register</h2>
+    <input id="reg-email" placeholder="Email">
+    <input id="reg-pass" type="password" placeholder="Password">
+    <button onclick="handleRegister()">Register</button>
+
+    <h2>Login</h2>
+    <input id="log-email" placeholder="Email">
+    <input id="log-pass" type="password" placeholder="Password">
+    <button onclick="handleLogin()">Login</button>
+
+    <script type="module">
+        import { registerUser } from "./auth/register.js";
+        import { loginUser } from "./auth/login.js";
+
+        async function handleRegister() {
+            const email = document.getElementById("reg-email").value;
+            const pass = document.getElementById("reg-pass").value;
+            alert(await registerUser(email, pass));
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById("log-email").value;
+            const pass = document.getElementById("log-pass").value;
+            alert(await loginUser(email, pass));
+        }
+    </script>
+</body>
+
+</html>
