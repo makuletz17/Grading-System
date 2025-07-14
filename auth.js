@@ -20,6 +20,7 @@ const passInput = document.getElementById("log-pass");
   });
 });
 
+const divmsg = document.getElementById("success-msg");
 // Form actions
 document.getElementById("login-btn").addEventListener("click", async () => {
   const btn = document.getElementById("login-btn");
@@ -40,7 +41,19 @@ document.getElementById("login-btn").addEventListener("click", async () => {
   const password = passInput.value;
 
   const result = await loginUser(email, password);
-  showToast(result, result.includes("Welcome") ? "success" : "error");
+  if (result.includes("success")) {
+    divmsg.innerHTML = "✅ Please check your email for confirmation";
+    divmsg.classList.remove("hidden");
+    divmsg.classList.add("success-box"); // Ensure correct styling
+  } else {
+    divmsg.innerHTML = "❌ Error. Please try again.";
+    divmsg.classList.remove("hidden");
+    divmsg.classList.add("error-box"); // Optional: define error styling
+  }
+  // Optionally auto-hide after a few seconds
+  setTimeout(() => {
+    divmsg.classList.add("hidden");
+  }, 5000);
 
   // Re-enable
   btn.disabled = false;
@@ -54,6 +67,7 @@ document.getElementById("signup-btn").addEventListener("click", async () => {
   const btn = document.getElementById("signup-btn");
   const text = document.getElementById("signup-text");
   const spinner = document.getElementById("signup-spinner");
+  const backToLogin = document.getElementById("back-to-login");
 
   const usernameInput = document.getElementById("reg-username");
   const emailInput = document.getElementById("reg-email");
@@ -76,7 +90,20 @@ document.getElementById("signup-btn").addEventListener("click", async () => {
     name: nameInput.value,
   });
 
-  showToast(result, result.includes("success") ? "success" : "error");
+  if (result.includes("success")) {
+    divmsg.innerHTML = "✅ Please check your email for confirmation";
+    divmsg.classList.remove("hidden");
+    divmsg.classList.add("success-box"); // Ensure correct styling
+  } else {
+    divmsg.innerHTML = "❌ Error. Please try again.";
+    divmsg.classList.remove("hidden");
+    divmsg.classList.add("error-box"); // Optional: define error styling
+  }
+
+  // Optionally auto-hide after a few seconds
+  setTimeout(() => {
+    divmsg.classList.add("hidden");
+  }, 5000);
 
   // Re-enable
   btn.disabled = false;
@@ -86,6 +113,7 @@ document.getElementById("signup-btn").addEventListener("click", async () => {
   nameInput.disabled = false;
   text.textContent = "Sign Up";
   spinner.classList.add("hidden");
+  backToLogin.click();
 });
 
 // Form toggling
@@ -95,26 +123,4 @@ document.getElementById("back-to-login").addEventListener("click", toggleForms);
 function toggleForms() {
   document.getElementById("login-form").classList.toggle("hidden");
   document.getElementById("register-form").classList.toggle("hidden");
-}
-
-function showToast(message, type = "info") {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.className =
-    "fixed bottom-4 right-4 px-4 py-2 rounded-md shadow-lg z-50 transition duration-300";
-
-  // Style by type
-  toast.classList.add(
-    type === "success"
-      ? "bg-green-600"
-      : type === "error"
-      ? "bg-red-600"
-      : "bg-gray-900"
-  );
-
-  toast.classList.remove("hidden");
-
-  setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 5000);
 }

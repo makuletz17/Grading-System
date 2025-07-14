@@ -7,6 +7,7 @@ import {
   w2ui,
   w2tabs,
 } from "https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.es6.min.js";
+import { getAvailableLevels, getLevelName } from "./Functions.js";
 
 const gridWrapper = document.getElementById("w2ui-grid");
 
@@ -39,13 +40,14 @@ let config = {
   moduleForm: {
     name: "moduleForm",
     header: "PROGRAM MODULE DEFINITION",
+    formURL: "../common/page/moduleDefine.html",
     focus: "mname",
     fields: [
       { field: "mname", type: "text", required: true },
       { field: "pname", type: "text", required: true },
       { field: "folder", type: "text", required: true },
       {
-        field: "ilevel",
+        field: "level",
         type: "list",
         required: true,
         options: { items: [] },
@@ -106,11 +108,12 @@ let config = {
       { field: "level", text: "MINIMUM LEVEL", size: "200px" },
     ],
     onAdd: function (event) {
-      new_module();
+      newModule();
     },
     onEdit: function (event) {
       if (grid.getSelection().length > 0) {
-        edit_module(grid.getSelection()[0]);
+        const record = grid.get(grid.getSelection()[0]);
+        editModule(record);
       } else {
         w2alert("Please select user to edit!");
       }
@@ -167,13 +170,13 @@ async function getTabs() {
   }
   const savedModule = localStorage.getItem("activeModuleTab");
 
-  const options = data.map((program, index) => ({
+  config.programParent = data.map((program, index) => ({
     id: program.id,
     text: program.parent_name || `Module ${index + 1}`,
   }));
 
-  tabs.tabs = options;
-  tabs.active = savedModule !== "" ? savedModule : options[0]?.id;
+  tabs.tabs = config.programParent;
+  tabs.active = savedModule !== "" ? savedModule : config.programParent[0].id;
   tabLayout.html("top", tabs);
   tabLayout.html("main", grid);
   tabs.refresh();
@@ -197,7 +200,7 @@ const getModules = async (parentId) => {
 
   if (error || !data || data.length === 0) {
     grid.clear();
-    grid.message = "No modules available.";
+    grid.message = [];
     return;
   }
 
@@ -207,9 +210,25 @@ const getModules = async (parentId) => {
     pname: program.program_name,
     folder: program.program_folder,
     active: program.is_active ? "✅" : "❌",
-    level: program.level,
+    level: getLevelName(program.level),
+    iparent: program.parent_id,
   }));
 
   grid.clear();
   grid.add(records);
 };
+
+function editModule(record) {
+  if (moduleForm) {
+    moduleForm.destroy();
+  }
+  tabLayout.html("left", moduleForm);
+  moduleForm.fields[3].options.items = getAvailableLevels();
+  moduleForm.fields[4].options.items = config.programParent;
+  moduleForm.record = record;
+  setTimeout(() => {
+    tabLayout.show("left");
+    tabLayout.lock("main");
+    tabLayout.refresh("left", moduleForm);
+  }, 100);
+}

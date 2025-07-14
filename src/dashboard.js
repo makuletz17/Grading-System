@@ -10,14 +10,17 @@ if (!user) {
   window.location.href = "index.html";
 } else {
   // Fill dropdown profile
-  document.getElementById("my-name").textContent = user.name;
   document.getElementById("menu-name").textContent = user.name;
   document.getElementById("menu-email").textContent = user.email;
   document.getElementById("menu-username").textContent = user.username;
   document.getElementById("menu-level").textContent = user.level;
-  document.getElementById("menu-hold").textContent = user.is_hold
-    ? "On Hold"
-    : "Active";
+  const statusDot = document.getElementById("menu-hold");
+
+  if (user.is_hold) {
+    statusDot.style.backgroundColor = "#dc2626"; // red-600
+  } else {
+    statusDot.style.backgroundColor = "#22c55e"; // green-500
+  }
 }
 
 // ✅ Profile dropdown toggle

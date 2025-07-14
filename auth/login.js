@@ -18,7 +18,7 @@ export async function loginUser(email, password) {
     .eq("is_hold", 0)
     .single();
 
-  if (profileError) return "Login successful, but profile not found.";
+  if (profileError) return "Please wait for confirmation of your account.";
 
   // Store session info (optional)
   localStorage.setItem("userProfile", JSON.stringify(userData));
