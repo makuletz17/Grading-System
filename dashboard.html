@@ -6,9 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Heroicons -->
-    <script src="https://unpkg.com/@heroicons/vue@2.0.17/24/outline/index.min.js"></script>
 </head>
+
+<style>
+    #module-panel {
+        transition: all 0.5s ease;
+        transform: translateX(20px);
+        opacity: 0;
+    }
+
+    #module-panel.opacity-100 {
+        transform: translateX(0);
+        opacity: 1;
+    }
+</style>
 
 <body class="bg-gray-100 min-h-screen flex">
 
@@ -22,25 +33,96 @@
 
     <!-- 🔷 Main Content -->
     <main class="flex-1 p-8">
+
+        <!-- Welcome + Profile -->
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Welcome, <span id="user-name">Loading...</span>!</h1>
-            <button id="logout-btn"
-                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition flex items-center gap-2">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-9V5m0 0h2m-2 0h-2" />
-                </svg>
-                Logout
-            </button>
+            <h1 class="text-3xl font-bold text-gray-800">
+                Welcome, <span id="my-name">Loading...</span>!
+            </h1>
+
+            <!-- 👤 Profile Dropdown -->
+            <div class="relative inline-block text-left">
+                <button id="profile-toggle"
+                    class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-500 transition">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5.121 17.804A3.75 3.75 0 016 15.25V5.75A3.75 3.75 0 0111.25 2h1.5A3.75 3.75 0 0116.5 5.75v9.5a3.75 3.75 0 01-1.121 2.554l-1.879 1.879a2.25 2.25 0 01-3.182 0l-1.879-1.879z" />
+                    </svg>
+                    Profile
+                    <svg class="w-4 h-4 ml-auto text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div id="profile-menu"
+                    class="absolute right-0 mt-2 w-72 origin-top-right bg-white rounded-xl shadow-xl hidden z-50 border border-gray-200">
+
+                    <!-- 🧑‍💼 User Info Panel -->
+                    <div class="p-4 text-sm text-gray-700 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5.121 17.804A3.75 3.75 0 016 15.25V6.25A3.75 3.75 0 0111.25 2h1.5A3.75 3.75 0 0116.5 6.25v9a3.75 3.75 0 01-1.121 2.554l-1.879 1.879a2.25 2.25 0 01-3.182 0l-1.879-1.879z" />
+                            </svg>
+                            <p><strong>Name:</strong> <span id="menu-name">Loading...</span></p>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 12H8m0 0l4 4m-4-4l4-4" />
+                            </svg>
+                            <p><strong>Email:</strong> <span id="menu-email"></span></p>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 11c0-1.104.896-2 2-2s2 .896 2 2-.896 2-2 2-2-.896-2-2z" />
+                            </svg>
+                            <p><strong>User ID:</strong> <span id="menu-username"></span></p>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 7h18M3 12h18M3 17h18" />
+                            </svg>
+                            <p><strong>Level </strong> <span id="menu-level"></span></p>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 17v-2a2 2 0 00-2-2H5a2 2 0 00-2 2v2m16 0v-2a2 2 0 00-2-2h-2a2 2 0 00-2 2v2m-4 0h8" />
+                            </svg>
+                            <p><strong>Status:</strong> <span id="menu-hold"></span></p>
+                        </div>
+                    </div>
+
+                    <!-- 🚪 Logout Button -->
+                    <div class="border-t">
+                        <button id="dropdown-logout"
+                            class="flex items-center gap-2 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-100 transition">
+                            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7" />
+                            </svg>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6 max-w-3xl space-y-2">
-            <p class="text-gray-700"><strong>Email:</strong> <span id="user-email"></span></p>
-            <p class="text-gray-700"><strong>Username:</strong> <span id="user-username"></span></p>
-            <p class="text-gray-700"><strong>Level:</strong> <span id="user-level"></span></p>
-            <p class="text-gray-700"><strong>Hold Status:</strong> <span id="user-hold"></span></p>
+        <!-- 🔘 Dynamic Module Panel -->
+        <div id="module-panel" class="hidden opacity-0 translate-x-5 transition duration-500">
+            <h2 id="module-loaded-name" class="text-xl font-bold text-indigo-700 mb-4 hidden"></h2>
         </div>
+
     </main>
+
+    <!-- Load JS -->
     <script type="module" src="./src/dashboard.js" defer></script>
 </body>
 

@@ -9,6 +9,17 @@ if (userSession.session?.user?.id) {
   window.location.href = "dashboard.html";
 }
 
+const emailInput = document.getElementById("log-email");
+const passInput = document.getElementById("log-pass");
+
+[emailInput, passInput].forEach((input) => {
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      document.getElementById("login-btn")?.click();
+    }
+  });
+});
+
 // Form actions
 document.getElementById("login-btn").addEventListener("click", async () => {
   const btn = document.getElementById("login-btn");
