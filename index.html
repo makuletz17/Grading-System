@@ -10,37 +10,37 @@
 
 <body class="bg-gradient-to-r from-sky-100 to-indigo-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-white shadow-xl rounded-xl p-8 w-full max-w-md">
-        <h1 class="text-3xl font-bold text-center text-indigo-600 mb-6 tracking-tight">Grading Portal</h1>
-
-        <!-- Toggle Tabs -->
-        <div class="flex justify-center mb-6 space-x-4 text-sm font-semibold">
-            <button onclick="showForm('register')"
-                class="px-4 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600 transition">Register</button>
-            <button onclick="showForm('login')"
-                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">Login</button>
-        </div>
-
-        <!-- Register Form -->
-        <div id="register-form">
-            <h2 class="text-lg font-medium mb-2">Create an account</h2>
-            <input id="reg-email" type="email" placeholder="Email"
-                class="mb-3 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-300" />
-            <input id="reg-pass" type="password" placeholder="Password"
-                class="mb-4 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-300" />
-            <button onclick="handleRegister()"
-                class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition">Sign Up</button>
-        </div>
+    <div class="bg-white shadow-xl rounded-xl p-8 w-full max-w-md space-y-8">
+        <h1 class="text-3xl font-bold text-center text-indigo-600 tracking-tight">Grading Portal</h1>
 
         <!-- Login Form -->
-        <div id="login-form" class="hidden">
-            <h2 class="text-lg font-medium mb-2">Welcome back</h2>
+        <div id="login-form">
+            <h2 class="text-lg font-medium mb-2">Login</h2>
             <input id="log-email" type="email" placeholder="Email"
                 class="mb-3 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-300" />
             <input id="log-pass" type="password" placeholder="Password"
                 class="mb-4 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-300" />
             <button onclick="handleLogin()"
                 class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition">Login</button>
+            <p class="mt-4 text-center text-sm">
+                Don't have an account?
+                <button onclick="toggleForms()" class="text-blue-600 underline hover:text-blue-800">Register</button>
+            </p>
+        </div>
+
+        <!-- Register Form (Initially Hidden) -->
+        <div id="register-form" class="hidden">
+            <h2 class="text-lg font-medium mb-2">Register</h2>
+            <input id="reg-email" type="email" placeholder="Email"
+                class="mb-3 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300" />
+            <input id="reg-pass" type="password" placeholder="Password"
+                class="mb-4 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300" />
+            <button onclick="handleRegister()"
+                class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">Sign Up</button>
+            <p class="mt-4 text-center text-sm">
+                Already have an account?
+                <button onclick="toggleForms()" class="text-blue-600 underline hover:text-blue-800">Login</button>
+            </p>
         </div>
     </div>
 
@@ -60,9 +60,10 @@
             alert(await loginUser(email, pass));
         }
 
-        function showForm() {
-            document.getElementById("register-form").classList.toggle("hidden", form !== "register");
-            document.getElementById("login-form").classList.toggle("hidden", form !== "login");
+        // Toggle between login and register forms
+        window.toggleForms = function () {
+            document.getElementById("login-form").classList.toggle("hidden");
+            document.getElementById("register-form").classList.toggle("hidden");
         };
     </script>
 </body>
