@@ -20,11 +20,11 @@
                 class="mb-3 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-300" />
             <input id="log-pass" type="password" placeholder="Password"
                 class="mb-4 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-indigo-300" />
-            <button onclick="handleLogin()"
+            <button id="login-btn"
                 class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition">Login</button>
             <p class="mt-4 text-center text-sm">
                 Don't have an account?
-                <button onclick="toggleForms()" class="text-blue-600 underline hover:text-blue-800">Register</button>
+                <button id="register-btn" class="text-blue-600 underline hover:text-blue-800">Register</button>
             </p>
         </div>
 
@@ -35,37 +35,16 @@
                 class="mb-3 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300" />
             <input id="reg-pass" type="password" placeholder="Password"
                 class="mb-4 w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300" />
-            <button onclick="handleRegister()"
+            <button id="signup-btn"
                 class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition">Sign Up</button>
             <p class="mt-4 text-center text-sm">
                 Already have an account?
-                <button onclick="toggleForms()" class="text-blue-600 underline hover:text-blue-800">Login</button>
+                <button class="text-blue-600 underline hover:text-blue-800" id="back-to-login">Login</button>
             </p>
         </div>
     </div>
+    <script type="module" src="./auth.js" defer></script>
 
-    <script type="module">
-        import { registerUser } from "./auth/register.js";
-        import { loginUser } from "./auth/login.js";
-
-        async function handleRegister() {
-            const email = document.getElementById("reg-email").value;
-            const pass = document.getElementById("reg-pass").value;
-            alert(await registerUser(email, pass));
-        }
-
-        async function handleLogin() {
-            const email = document.getElementById("log-email").value;
-            const pass = document.getElementById("log-pass").value;
-            alert(await loginUser(email, pass));
-        }
-
-        // Toggle between login and register forms
-        window.toggleForms = function () {
-            document.getElementById("login-form").classList.toggle("hidden");
-            document.getElementById("register-form").classList.toggle("hidden");
-        };
-    </script>
 </body>
 
 </html>
