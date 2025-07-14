@@ -60,7 +60,7 @@
             alert(await loginUser(email, pass));
         }
 
-        window.showForm = function (form) {
+        function showForm() {
             document.getElementById("register-form").classList.toggle("hidden", form !== "register");
             document.getElementById("login-form").classList.toggle("hidden", form !== "login");
         };
