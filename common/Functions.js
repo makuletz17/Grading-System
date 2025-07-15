@@ -79,3 +79,19 @@ export function showConfirmation(message, action) {
       await renderUserGrid();
     });
 }
+
+export function createDot() {
+  const dot = document.createElement("span");
+  dot.className =
+    "status-dot inline-block w-2 h-2 bg-green-500 rounded-full mr-2";
+  return dot;
+}
+
+export function removeDot() {
+  document
+    .querySelectorAll("[data-module], #load-module-define, #user-reg")
+    .forEach((btn) => {
+      const dot = btn.querySelector(".status-dot");
+      if (dot) dot.remove();
+    });
+}

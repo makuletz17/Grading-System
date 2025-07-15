@@ -33,6 +33,7 @@ export async function registerUser(data) {
         name,
         username,
         email,
+        level: 2,
         is_hold: 0,
         is_registered: 0,
         date_created: new Date(),

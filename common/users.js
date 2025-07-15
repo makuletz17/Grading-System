@@ -150,13 +150,16 @@ async function renderUserGrid() {
         async () => {
           const { error } = await supabase
             .from("users")
-            .update({ is_registered: true })
+            .update({ is_registered: 1 })
             .eq("id", selectedUser.id);
-          if (error) showToast("Confirmation failed", "error");
-          else showToast("User confirmed", "success");
+          if (error) {
+            showToast("Confirmation failed", "error");
+          } else {
+            showToast("User confirmed", "success");
+            await renderUserGrid();
+          }
         }
       );
-      await renderUserGrid();
     });
 }
 

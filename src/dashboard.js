@@ -1,3 +1,4 @@
+import { createDot, getLevelName, removeDot } from "../common/Functions.js";
 import { supabase } from "./../supabaseClient.js";
 
 // ✅ Check session and redirect if not logged in
@@ -16,7 +17,7 @@ if (!user) {
   document.getElementById("menu-name").textContent = user.name;
   document.getElementById("menu-email").textContent = user.email;
   document.getElementById("menu-username").textContent = user.username;
-  document.getElementById("menu-level").textContent = user.level;
+  document.getElementById("menu-level").textContent = getLevelName(user.level);
 
   const statusDot = document.getElementById("menu-hold");
   statusDot.classList.add(user.is_hold ? "bg-red-600" : "bg-green-500");
@@ -64,7 +65,10 @@ async function buildSidebarTools() {
 
   try {
     const [parentsRes, programsRes] = await Promise.all([
-      supabase.from("program_parent").select("*"),
+      supabase
+        .from("program_parent")
+        .select("*")
+        .order("seq", { ascending: true }),
       supabase.from("program").select("*"),
     ]);
 
@@ -77,6 +81,10 @@ async function buildSidebarTools() {
         modulesByParent[program.parent_id] = [];
       }
       modulesByParent[program.parent_id].push(program);
+    }
+
+    for (const parentId in modulesByParent) {
+      modulesByParent[parentId].sort((a, b) => a.seq - b.seq);
     }
 
     sidebar.innerHTML = ""; // Clear loading
@@ -145,19 +153,10 @@ async function buildSidebarTools() {
         const moduleName = btn.textContent.trim();
 
         // Remove green dot from others
-        sidebar
-          .querySelectorAll("[data-module],  #load-module-define, #user-reg")
-          .forEach((b) => {
-            const icon = b.querySelector(".status-dot");
-            if (icon) icon.remove();
-          });
+        removeDot();
 
         // Add green dot to clicked
-        const dot = document.createElement("span");
-        dot.className =
-          "status-dot inline-block w-2 h-2 bg-green-500 rounded-full mr-2";
-        btn.prepend(dot);
-
+        btn.prepend(createDot());
         loadModulePanel(moduleName, folder);
       });
     });
@@ -194,44 +193,21 @@ async function buildSidebarTools() {
         arrow.classList.toggle("rotate-180", !isOpen);
       });
 
-      document
-        .getElementById("load-module-define")
-        .addEventListener("click", () => {
-          // Clear active indicators from all module buttons
-          document
-            .querySelectorAll("[data-module], #load-module-define, #user-reg")
-            .forEach((btn) => {
-              const dot = btn.querySelector(".status-dot");
-              if (dot) dot.remove();
-            });
+      const moduleBtn = document.getElementById("load-module-define");
+      const userBtn = document.getElementById("user-reg");
 
-          // Add dot to this admin button
-          const defineBtn = document.getElementById("load-module-define");
-          const dot = document.createElement("span");
-          dot.className =
-            "status-dot inline-block w-2 h-2 bg-green-500 rounded-full mr-2";
-          defineBtn.prepend(dot);
-
-          // Load module definition
-          loadModulePanel("Program Definition", "./common/moduleDefine");
-        });
-
-      document.getElementById("user-reg").addEventListener("click", () => {
+      moduleBtn.addEventListener("click", () => {
         // Clear active indicators from all module buttons
-        document
-          .querySelectorAll("[data-module], #load-module-define, #user-reg")
-          .forEach((btn) => {
-            const dot = btn.querySelector(".status-dot");
-            if (dot) dot.remove();
-          });
+        removeDot();
+        moduleBtn.prepend(createDot());
+        // Load module definition
+        loadModulePanel("Program Definition", "./common/moduleDefine");
+      });
 
-        // Add dot to this admin button
-        const defineBtn = document.getElementById("user-reg");
-        const dot = document.createElement("span");
-        dot.className =
-          "status-dot inline-block w-2 h-2 bg-green-500 rounded-full mr-2";
-        defineBtn.prepend(dot);
-
+      userBtn.addEventListener("click", () => {
+        // Clear active indicators from all module buttons
+        removeDot();
+        userBtn.prepend(createDot());
         // Load module definition
         loadModulePanel("User Registration & Confirmation", "./common/users");
       });
@@ -267,7 +243,6 @@ async function loadModulePanel(moduleName, moduleFolder) {
   }, 10);
 
   container.innerHTML = "";
-  container.innerHTML = `<p class='text-gray-500'>Loading ${moduleFolder}...</p>`;
 
   try {
     const res = await fetch(`${moduleFolder}.html`);

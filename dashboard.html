@@ -40,11 +40,10 @@
                 <i class=" fa-solid fa-house"></i>
                 <span id="dashboard-title">Dashboard</span>
             </div>
-
             <!-- 👤 Profile Dropdown -->
             <div class="relative inline-block text-left">
                 <button id="profile-toggle"
-                    class="flex items-center gap-2 text-white px-4 py-2 rounded hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600 transition focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700 dark:border-gray-700">
+                    class="flex items-center gap-2 text-white px-2 py-1 rounded hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 transition focus:outline-none focus:ring-1 focus:ring-gray-300 dark:focus:ring-gray-700 dark:border-gray-700">
                     <i class="fa fa-circle-user"></i>
                     <span id="menu-username">User</span>
                     <span id="menu-hold" class="inline-block w-2.5 h-2.5 bg-green-400 rounded-full"></span>
@@ -63,7 +62,7 @@
                                 id="menu-name">Loading...</span></p>
                         <p class="flex items-center gap-2"><i class="fa-solid fa-envelope"></i> <span
                                 id="menu-email">email@example.com</span></p>
-                        <p class="flex items-center gap-2"><i class="fa-solid fa-code"></i> Level <span
+                        <p class="flex items-center gap-2"><i class="fa-solid fa-code"></i><span
                                 id="menu-level">0</span></p>
                     </div>
 
@@ -80,6 +79,8 @@
         </div>
         <div id="toast-container" class="fixed origin-top-right right-4 space-y-2 z-50"></div>
         <!-- 🔘 Dynamic Module Panel -->
+        <hr class="my-4 border-t border-gray-300 dark:border-gray-700" />
+
         <div id="module-panel" class="hidden opacity-0 translate-x-5 transition duration-500">
             <h2 id="module-loaded-name" class="text-xl font-bold text-indigo-700 dark:text-indigo-400 mb-4 hidden"></h2>
         </div>
