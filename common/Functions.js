@@ -52,3 +52,30 @@ export function showToast(message, type = "info") {
     setTimeout(() => toast.remove(), 300);
   }, 3000);
 }
+
+export function showConfirmation(message, action) {
+  const overlay = document.getElementById("modal-overlay");
+  const content = document.getElementById("modal-content");
+
+  content.innerHTML = `
+    <p class="mb-4">${message}</p>
+    <div class="flex justify-end gap-2">
+      <button id="cancel-confirm" class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-500">Cancel</button>
+      <button id="proceed-confirm" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-500">Confirm</button>
+    </div>
+  `;
+
+  overlay.classList.remove("hidden");
+
+  document.getElementById("cancel-confirm").addEventListener("click", () => {
+    overlay.classList.add("hidden");
+  });
+
+  document
+    .getElementById("proceed-confirm")
+    .addEventListener("click", async () => {
+      overlay.classList.add("hidden");
+      await action();
+      await renderUserGrid();
+    });
+}

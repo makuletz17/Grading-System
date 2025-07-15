@@ -4,6 +4,8 @@ import { supabase } from "./../supabaseClient.js";
 const { data } = await supabase.auth.getSession();
 if (!data.session?.user?.id) window.location.href = "index.html";
 
+const lastModule = JSON.parse(localStorage.getItem("activeModule") || "{}");
+
 // ✅ Load user profile from localStorage
 const user = JSON.parse(localStorage.getItem("userProfile"));
 if (!user) {
@@ -18,6 +20,26 @@ if (!user) {
 
   const statusDot = document.getElementById("menu-hold");
   statusDot.classList.add(user.is_hold ? "bg-red-600" : "bg-green-500");
+  if (lastModule.folder) {
+    loadModulePanel(lastModule.name || "Last Module", lastModule.folder);
+  }
+
+  // ✅ Restore highlight in sidebar
+  const targetSelector =
+    lastModule.folder === "./common/moduleDefine"
+      ? "#load-module-define"
+      : lastModule.folder === "./common/users"
+      ? "#user-reg"
+      : `[data-module="${lastModule.folder}"]`;
+
+  const target = document.querySelector(targetSelector);
+  if (target) {
+    const dot = document.createElement("span");
+    dot.className =
+      "status-dot inline-block w-2 h-2 bg-green-500 rounded-full mr-2";
+    target.prepend(dot);
+    target.classList.add("bg-green-50");
+  }
 }
 
 // ✅ Profile dropdown toggle
@@ -221,7 +243,13 @@ async function buildSidebarTools() {
 }
 
 async function loadModulePanel(moduleName, moduleFolder) {
-  localStorage.setItem("activeModule", moduleFolder);
+  localStorage.setItem(
+    "activeModule",
+    JSON.stringify({
+      name: moduleName,
+      folder: moduleFolder,
+    })
+  );
 
   const container = document.getElementById("module-panel");
   container.classList.remove("hidden");

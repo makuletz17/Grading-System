@@ -1,5 +1,10 @@
 import { supabase } from "../supabaseClient.js";
-import { getLevelName, showToast } from "./Functions.js";
+import {
+  getAvailableLevels,
+  getLevelName,
+  showConfirmation,
+  showToast,
+} from "./Functions.js";
 
 let selectedUser = null;
 
@@ -117,25 +122,40 @@ async function renderUserGrid() {
   // Button actions
   document
     .getElementById("user-add")
-    .addEventListener("click", () => showToast("Add user clicked", "info"));
+    .addEventListener("click", () => showUserForm("add"));
+
   document.getElementById("user-edit").addEventListener("click", () => {
     if (!selectedUser) return showToast("No user selected", "warning");
-    showToast(`Edit: ${selectedUser.username}`, "info");
+    showUserForm("edit", selectedUser);
   });
+
   document.getElementById("user-delete").addEventListener("click", () => {
     if (!selectedUser) return showToast("No user selected", "warning");
-    showToast(`Delete: ${selectedUser.username}`, "error");
+    showConfirmation(`Delete user "${selectedUser.username}"?`, async () => {
+      const { error } = await supabase
+        .from("users")
+        .delete()
+        .eq("id", selectedUser.id);
+      if (error) showToast("Failed to delete user", "error");
+      else showToast("User deleted", "success");
+    });
   });
+
   document
     .getElementById("user-confirm")
     .addEventListener("click", async () => {
       if (!selectedUser) return showToast("No user selected", "warning");
-      const { error } = await supabase
-        .from("users")
-        .update({ is_registered: true })
-        .eq("id", selectedUser.id);
-      if (error) return showToast("Confirmation failed", "error");
-      showToast(`User ${selectedUser.username} confirmed`, "success");
+      showConfirmation(
+        `Confirm registration for "${selectedUser.username}"?`,
+        async () => {
+          const { error } = await supabase
+            .from("users")
+            .update({ is_registered: true })
+            .eq("id", selectedUser.id);
+          if (error) showToast("Confirmation failed", "error");
+          else showToast("User confirmed", "success");
+        }
+      );
       await renderUserGrid();
     });
 }
@@ -178,5 +198,84 @@ function updateToolbarStates() {
     });
   }
 }
+
+function showUserForm(mode = "add", user = {}) {
+  const overlay = document.getElementById("modal-overlay");
+  const content = document.getElementById("modal-content");
+
+  const isEdit = mode === "edit";
+
+  content.innerHTML = `
+    <h2 class="text-lg font-semibold mb-4">${isEdit ? "Edit" : "Add"} User</h2>
+    <div class="space-y-3">
+      <input id="form-name" type="text" placeholder="Full Name" value="${
+        user.name || ""
+      }" class="w-full px-3 py-2 rounded border border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100" />
+      <input id="form-username" type="text" placeholder="Username" value="${
+        user.username || ""
+      }" class="w-full px-3 py-2 rounded border border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100" />
+      <input id="form-email" type="email" placeholder="Email" value="${
+        user.email || ""
+      }" class="w-full px-3 py-2 rounded border border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100" />
+      <select id="form-role" class="w-full px-3 py-2 rounded border border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+        ${getAvailableLevels()
+          .map(
+            (level) =>
+              `<option value="${level.id}" ${
+                user.level === level.value ? "selected" : ""
+              }>${level.text}</option>`
+          )
+          .join("")}
+        </select>
+
+    </div>
+    <div class="flex justify-end mt-5 gap-2">
+      <button id="cancel-user-form" class="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-500">Cancel</button>
+      <button id="submit-user-form" class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-500">${
+        isEdit ? "Update" : "Save"
+      }</button>
+    </div>
+  `;
+
+  overlay.classList.remove("hidden");
+
+  document.getElementById("cancel-user-form").addEventListener("click", () => {
+    overlay.classList.add("hidden");
+  });
+
+  document
+    .getElementById("submit-user-form")
+    .addEventListener("click", async () => {
+      const name = document.getElementById("form-name").value.trim();
+      const username = document.getElementById("form-username").value.trim();
+      const email = document.getElementById("form-email").value.trim();
+      const level = parseInt(document.getElementById("form-role").value);
+
+      if (!name || !username || !email || isNaN(level)) {
+        showToast("All fields are required", "warning");
+        return;
+      }
+
+      const payload = { name, username, email, level };
+      let result;
+
+      if (isEdit) {
+        result = await supabase.from("users").update(payload).eq("id", user.id);
+      } else {
+        result = await supabase
+          .from("users")
+          .insert({ ...payload, is_registered: false, is_hold: false });
+      }
+
+      if (result.error) {
+        showToast(result.error.message, "error");
+      } else {
+        showToast(`${isEdit ? "updated" : "created"} successfully`, "success");
+        overlay.classList.add("hidden");
+        await renderUserGrid();
+      }
+    });
+}
+
 // 🚀 Load grid
 renderUserGrid();
