@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 
 <head>
     <meta charset="UTF-8" />
@@ -22,58 +22,55 @@
     }
 </style>
 
-<body class="bg-gray-100 min-h-screen flex">
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100 min-h-screen flex">
 
     <!-- 🟦 Sidebar -->
-    <aside class="w-64 bg-indigo-700 text-white flex-shrink-0 p-6 space-y-6">
+    <aside class="w-64 bg-gray-800 text-white dark:bg-gray-900 flex-shrink-0 p-6 space-y-6">
         <h2 class="text-2xl font-bold">🎓 Animerza</h2>
-        <nav class="space-y-4">
-            <div id="admin-link-container"></div>
-        </nav>
+        <div id="sidebar-container" class="space-y-4">
+            <div id="sidebar-programs" class="space-y-2"></div>
+        </div>
     </aside>
 
     <!-- 🔷 Main Content -->
-    <main class="flex-1 p-8">
-
+    <main class="flex-1 p-2 overflow-auto">
         <!-- Welcome + Profile -->
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3x font-bold text-gray-800">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </h1>
+            <div class="flex items-center gap-2 px-3 py-3 text-sm text-white" id="dashboard">
+                <i class=" fa-solid fa-house"></i>
+                <span id="dashboard-title">Dashboard</span>
+            </div>
 
             <!-- 👤 Profile Dropdown -->
             <div class="relative inline-block text-left">
                 <button id="profile-toggle"
-                    class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-500 transition">
+                    class="flex items-center gap-2 text-white px-4 py-2 rounded hover:bg-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600 transition focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-700 dark:border-gray-700">
                     <i class="fa fa-circle-user"></i>
-                    <span id="menu-username"></span> <span id="menu-hold"
-                        style="width: 10px; height: 10px; border-radius: 50%;"></span>
-                    <svg class="w-4 h-4 ml-auto text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span id="menu-username">User</span>
+                    <span id="menu-hold" class="inline-block w-2.5 h-2.5 bg-green-400 rounded-full"></span>
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
 
+                <!-- Dropdown Menu -->
                 <div id="profile-menu"
-                    class="absolute right-0 mt-2 w-72 origin-top-right bg-white rounded-xl shadow-xl hidden z-50 border border-gray-200">
+                    class="absolute right-0 mt-2 w-72 origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-xl hidden z-50 border border-gray-200 dark:border-gray-700 transition">
 
-                    <!-- 🧑‍💼 User Info Panel -->
-                    <div class="p-4 text-sm text-gray-700 space-y-3">
-                        <div class="flex items-center gap-2">
-                            <p><i class="fa-solid fa-id-card"></i> <span id="menu-name">Loading...</span></p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <p><i class="fa-solid fa-envelope"></i> <span id="menu-email"></span></p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <p><i class="fa-solid fa-code"></i> Level <span id="menu-level"></span></p>
-                        </div>
+                    <!-- 🧑‍💼 User Info -->
+                    <div class="p-4 text-sm text-gray-700 dark:text-gray-200 space-y-3">
+                        <p class="flex items-center gap-2"><i class="fa-solid fa-id-card"></i> <span
+                                id="menu-name">Loading...</span></p>
+                        <p class="flex items-center gap-2"><i class="fa-solid fa-envelope"></i> <span
+                                id="menu-email">email@example.com</span></p>
+                        <p class="flex items-center gap-2"><i class="fa-solid fa-code"></i> Level <span
+                                id="menu-level">0</span></p>
                     </div>
 
-                    <!-- 🚪 Logout Button -->
-                    <div class="border-t">
+                    <!-- 🚪 Logout -->
+                    <div class="border-t border-gray-200 dark:border-gray-700">
                         <button id="dropdown-logout"
-                            class="flex items-center gap-2 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-100 transition">
+                            class="flex items-center gap-2 w-full px-4 py-3 text-sm text-red-600 transition hover:bg-red-600 hover:text-white dark:hover:bg-red-700 dark:hover:text-white rounded-b-xl">
                             <i class="fa-solid fa-arrow-right-from-bracket"></i>
                             Logout
                         </button>
@@ -81,15 +78,15 @@
                 </div>
             </div>
         </div>
-
+        <div id="toast-container" class="fixed origin-top-right right-4 space-y-2 z-50"></div>
         <!-- 🔘 Dynamic Module Panel -->
         <div id="module-panel" class="hidden opacity-0 translate-x-5 transition duration-500">
-            <h2 id="module-loaded-name" class="text-xl font-bold text-indigo-700 mb-4 hidden"></h2>
+            <h2 id="module-loaded-name" class="text-xl font-bold text-indigo-700 dark:text-indigo-400 mb-4 hidden"></h2>
         </div>
 
     </main>
 
-    <!-- Load JS -->
+    <!-- Load Dashboard JS -->
     <script type="module" src="./src/dashboard.js" defer></script>
 </body>
 

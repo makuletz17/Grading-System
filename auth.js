@@ -20,7 +20,7 @@ const passInput = document.getElementById("log-pass");
   });
 });
 
-const divmsg = document.getElementById("success-msg");
+const divmsg = document.getElementById("info-msg");
 // Form actions
 document.getElementById("login-btn").addEventListener("click", async () => {
   const btn = document.getElementById("login-btn");
@@ -41,14 +41,12 @@ document.getElementById("login-btn").addEventListener("click", async () => {
   const password = passInput.value;
 
   const result = await loginUser(email, password);
-  if (result.includes("success")) {
-    divmsg.innerHTML = "✅ Please check your email for confirmation";
-    divmsg.classList.remove("hidden");
-    divmsg.classList.add("success-box"); // Ensure correct styling
+  if (result.status === "success") {
+    window.location.href = "dashboard.html";
   } else {
-    divmsg.innerHTML = "❌ Error. Please try again.";
+    divmsg.innerHTML = "❌ Error." + result.message;
     divmsg.classList.remove("hidden");
-    divmsg.classList.add("error-box"); // Optional: define error styling
+    divmsg.classList.add("error-box"); // error styling
   }
   // Optionally auto-hide after a few seconds
   setTimeout(() => {

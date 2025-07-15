@@ -5,10 +5,10 @@ export async function loginUser(email, password) {
     email,
     password,
   });
-  if (error) return error.message;
+  if (error) return { status: "error", message: error.message };
 
   const userId = authData.user?.id;
-  if (!userId) return "Logged in, but user ID not found.";
+  if (!userId) return { status: "error", message: "Please try again later." };
 
   const { data: userData, error: profileError } = await supabase
     .from("users")
@@ -18,13 +18,14 @@ export async function loginUser(email, password) {
     .eq("is_hold", 0)
     .single();
 
-  if (profileError) return "Please wait for confirmation of your account.";
+  if (profileError)
+    return {
+      status: "error",
+      message: "Please wait for confirmation of your account.",
+    };
 
   // Store session info (optional)
   localStorage.setItem("userProfile", JSON.stringify(userData));
 
-  // Redirect to dashboard
-  window.location.href = "dashboard.html";
-
-  return `Welcome ${userData.name}!`;
+  return { status: "success", data: userData.name };
 }
