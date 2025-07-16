@@ -1,0 +1,259 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" />
+
+<style>
+    /* Add this to your global CSS or a <style> block */
+    .gridjs-pagination {
+        display: flex;
+        justify-content: right;
+        margin-top: .3rem;
+        margin-bottom: .3rem;
+    }
+
+    .gridjs-pagination .gridjs-pages button {
+        background-color: #1f2937;
+        color: #f3f4f6;
+        border: 1px solid #374151;
+        padding: 2px 10px;
+        margin: 0 4px;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+    }
+
+    .gridjs-pagination .gridjs-pages button:hover {
+        background-color: #374151;
+    }
+
+    .gridjs-search input {
+        background-color: #1f2937;
+        color: #f3f4f6;
+        border: 1px solid #374151;
+        padding-left: 2.5rem;
+        border-radius: 6px;
+        height: 2.25rem;
+    }
+
+    .gridjs-search {
+        position: relative;
+        margin: .5rem;
+    }
+
+    .gridjs-search::before {
+        content: "\f002";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.85rem;
+        color: #9ca3af;
+        pointer-events: none;
+    }
+
+    #student-grid .gridjs-table tbody tr:hover {
+        background-color: #4b5563;
+        cursor: pointer;
+    }
+</style>
+<div class="flex justify-end items-center gap-2 mb-4" id="btn-options">
+    <button id="btn-add"
+        class="bg-gray-800 hover:bg-gray-700 text-gray-100 text-sm px-4 py-2 rounded-md border border-gray-600 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-gray-400">
+        <i class="fa-solid fa-user-plus mr-2"></i> Add Student
+    </button>
+
+    <button id="btn-edit"
+        class="bg-gray-800 hover:bg-gray-700 text-gray-100 text-sm px-4 py-2 rounded-md border border-gray-600 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-gray-400">
+        <i class="fa-solid fa-user-pen mr-2"></i> Edit Student
+    </button>
+    <button id="btn-upload"
+        class="bg-gray-800 hover:bg-gray-700 text-gray-100 text-sm px-4 py-2 rounded-md border border-gray-600 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-gray-300">
+        <i class="fa-solid fa-file-arrow-up mr-2"></i> Upload Students
+    </button>
+</div>
+<!-- 📂 Upload Modal -->
+<div id="csvModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg w-full max-w-2xl border border-gray-700 space-y-4">
+        <h2 class="text-white text-xl font-semibold">📤 Upload Students CSV</h2>
+
+        <!-- File Input -->
+        <div class="bg-gray-800 p-3 rounded border border-gray-600">
+            <input id="csvFile" type="file" accept=".csv"
+                class="block w-full text-sm text-white file:bg-gray-700 file:text-white file:rounded file:px-4 file:py-2 file:border-none" />
+        </div>
+
+        <!-- Preview Table -->
+        <div id="csvPreviewContainer" class="overflow-auto max-h-64 hidden border border-gray-600 rounded">
+            <table class="min-w-full text-sm text-white divide-y divide-gray-700" id="csvPreviewTable">
+                <thead class="bg-gray-800 text-gray-300" id="csvTableHead"></thead>
+                <tbody id="csvTableBody" class="bg-gray-900 divide-y divide-gray-700"></tbody>
+            </table>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end space-x-3 pt-4">
+            <button id="cancelCsvUpload" class="px-4 py-2 text-sm bg-gray-600 hover:bg-gray-700 rounded text-white">
+                Cancel
+            </button>
+            <button id="submitCsvUpload" class="px-4 py-2 text-sm bg-gray-600 hover:bg-gray-700 rounded text-white">
+                Upload
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="flex justify-end gap-2 mb-4 items-center hidden" id="btn-form">
+    <button id="btn-add-cancel"
+        class="bg-gray-800 hover:bg-gray-700 text-gray-100 text-sm px-4 py-2 rounded-md border border-gray-600 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-gray-400">Cancel</button>
+    <button id="btn-add-confirm"
+        class="bg-gray-800 hover:bg-gray-700 text-gray-100 text-sm px-4 py-2 rounded-md border border-gray-600 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-gray-400">Save</button>
+</div>
+<div class="w-full md:w-full lg:w-full mx-auto space-y-6 p-4 y-1 rounded bg-gray-700 hidden" id="student-form">
+    <span class="text-2xl font-bold">Student Form</span>
+    <form class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div class="space-y-4 flex flex-col items-center">
+            <div
+                class="w-32 h-32 rounded-full bg-gray-700 flex justify-center items-center border border-gray-600 shadow-inner">
+                <i class="fa-solid fa-user-circle text-gray-500 text-6xl"></i>
+            </div>
+
+            <!-- LRN -->
+            <div class="w-full">
+                <label for="lrn" class="block text-gray-300 mb-1">LRN</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-id-badge text-gray-400 text-sm mr-2"></i>
+                    <input id="lrn" type="text" placeholder="LRN"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+
+            <!-- Name Fields -->
+            <div class="w-full">
+                <label for="lastname" class="block text-gray-300 mb-1">Last Name</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-id-card text-gray-400 text-sm mr-2"></i>
+                    <input id="lastname" type="text" placeholder="Last Name"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+
+            <div class="w-full">
+                <label for="firstname" class="block text-gray-300 mb-1">First Name</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-user text-gray-400 text-sm mr-2"></i>
+                    <input id="firstname" type="text" placeholder="First Name"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+
+            <div class="w-full">
+                <label for="middlename" class="block text-gray-300 mb-1">Middle Name</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-signature text-gray-400 text-sm mr-2"></i>
+                    <input id="middlename" type="text" placeholder="Middle Name"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+            <div class="w-full">
+                <label for="brgy" class="block text-gray-300 mb-1">Barangay</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-map-pin text-gray-400 text-sm mr-2"></i>
+                    <input id="brgy" type="text" placeholder="Barangay"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+
+            <div class="w-full">
+                <label for="address" class="block text-gray-300 mb-1">Address</label>
+                <div class="flex bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-house-user text-gray-400 text-sm mr-2 pt-2"></i>
+                    <textarea id="address" placeholder="Address"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none resize-none"></textarea>
+                </div>
+            </div>
+            <div class="w-full">
+                <label for="contact" class="block text-gray-300 mb-1">Contact Number</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-phone text-gray-400 text-sm mr-2"></i>
+                    <input id="contact" type="text" placeholder="Contact Number"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+
+        </div>
+        <div class="grid grid-cols-1 gap-4">
+            <!-- ⚧️ Sex Select -->
+            <div>
+                <label for="sex" class="block text-gray-300 mb-1">Sex</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-venus-mars text-gray-400 text-sm mr-2"></i>
+                    <select id="sex"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none appearance-none">
+                        <option class="text-sm bg-gray-900 text-white" disabled selected>Select Sex</option>
+                        <option class="text-sm bg-gray-900 text-white" value="Male">Male</option>
+                        <option class="text-sm bg-gray-900 text-white" value="Female">Female</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label for="bday" class="block text-gray-300 mb-1">Birthday</label>
+                <div class="flex bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-calendar-day text-gray-400 text-sm mr-2 pt-2"></i>
+                    <input id="bday" type="text" placeholder="Birthday"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+
+            <div>
+                <label for="age" class="block text-gray-300 mb-1">Age</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-hourglass-half text-gray-400 text-sm mr-2"></i>
+                    <input id="age" type="number" placeholder="Age"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" disabled />
+                </div>
+            </div>
+            <div>
+                <label for="avg" class="block text-gray-300 mb-1">Average</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-chart-line text-gray-400 text-sm mr-2"></i>
+                    <input id="avg" type="number" step="0.01" placeholder="Average"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+            <div>
+                <label for="guardian" class="block text-gray-300 mb-1">Guardian</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-users text-gray-400 text-sm mr-2"></i>
+                    <input id="guardian" type="text" placeholder="Guardian"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+            <div>
+                <label for="fbname" class="block text-gray-300 mb-1">Facebook Name</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-brands fa-facebook text-gray-400 text-sm mr-2"></i>
+                    <input id="fbname" type="text" placeholder="Facebook Name"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+
+            <div>
+                <label for="fblink" class="block text-gray-300 mb-1">Facebook Link</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-link text-gray-400 text-sm mr-2"></i>
+                    <input id="fblink" type="url" placeholder="Facebook Link"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+
+            <div>
+                <label for="prevadviser" class="block text-gray-300 mb-1">Previous Adviser</label>
+                <div class="flex items-center bg-gray-800 rounded border border-gray-600 px-2">
+                    <i class="fa-solid fa-chalkboard-user text-gray-400 text-sm mr-2"></i>
+                    <input id="prevadviser" type="text" placeholder="Previous Adviser"
+                        class="w-full text-sm bg-transparent text-white py-2 focus:outline-none" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="student-grid" class="mt-6 bg-gray-900 text-white rounded-lg shadow-lg border border-gray-700 p-4"></div>

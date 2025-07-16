@@ -1,6 +1,6 @@
 import { supabase } from "../supabaseClient.js";
-import { Grid } from "https://unpkg.com/gridjs?module";
 import {
+  adjustGridHeight,
   getAvailableLevels,
   getIp,
   getLevelName,
@@ -14,10 +14,6 @@ let selectedRecord = null;
 
 let activeTabId = localStorage.getItem("activeModuleTab") || null;
 
-function adjustGridHeight() {
-  const h = window.innerHeight - 170;
-  gridWrapper.style.height = `${h}px`;
-}
 window.addEventListener("resize", adjustGridHeight);
 
 // 📊 Render Grid.js table

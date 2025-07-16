@@ -69,7 +69,7 @@ async function buildSidebarTools() {
         .from("program_parent")
         .select("*")
         .order("seq", { ascending: true }),
-      supabase.from("program").select("*"),
+      supabase.from("program").select("*").order("id", { ascending: true }),
     ]);
 
     const parents = parentsRes.data || [];
@@ -121,7 +121,7 @@ async function buildSidebarTools() {
             (m) => `
               <button 
         class="block w-full text-left px-6 py-2 text-sm border-t border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-        data-module="${m.program_folder}">
+        data-module="${m.program_folder}/${m.program_name}">
           ${m.menu_name}
         </button>`
           )

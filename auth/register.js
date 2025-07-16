@@ -1,4 +1,5 @@
 import { supabase } from "../supabaseClient.js";
+import { Grid } from "https://unpkg.com/gridjs?module";
 
 export async function registerUser(data) {
   const { username, email, password, name } = data;

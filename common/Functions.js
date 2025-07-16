@@ -52,6 +52,32 @@ export function showToast(message, type = "info") {
     setTimeout(() => toast.remove(), 300);
   }, 3000);
 }
+export function calculateAge(birthday) {
+  if (!birthday) return null;
+  const birthDate = new Date(birthday);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+  return age;
+}
+
+export function formatDateMDY(dateString) {
+  if (!dateString) return "—";
+  const date = new Date(dateString);
+  if (isNaN(date)) return "—";
+
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const yyyy = date.getFullYear();
+
+  return `${mm}/${dd}/${yyyy}`;
+}
+
+export function adjustGridHeight() {
+  const h = window.innerHeight - 170;
+  gridWrapper.style.height = `${h}px`;
+}
 
 export function showConfirmation(message, action) {
   const overlay = document.getElementById("modal-overlay");
